@@ -19,10 +19,10 @@ describe('agent registration', () => {
     await user.click(screen.getByRole('button', { name: 'Verify and continue' }))
 
     expect(await screen.findByRole('heading', { name: 'Your details' })).toBeInTheDocument()
-    // The details page is the form alone: logo on top, guidelines at the bottom, no side panel.
+    // The details page is the form alone: logo on top, guidelines below the form, no side panel.
     expect(screen.getByRole('img', { name: 'KENNIX Real Estate' })).toBeInTheDocument()
     expect(screen.queryByText(/Bring us land/)).not.toBeInTheDocument()
-    const guidelines = screen.getByRole('region', { name: /Guidelines for Channel Partners/ })
+    const guidelines = screen.getByRole('region', { name: 'Guidelines:' })
     expect(guidelines).toHaveTextContent(/registers the property details first/)
     expect(guidelines).toHaveTextContent(/must accompany the KENNIX Land Sourcing team/)
     await user.click(screen.getByRole('button', { name: /Join the KENNIX agent network/ }))

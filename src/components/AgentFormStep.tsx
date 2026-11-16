@@ -1,15 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Plus, ScrollText, Send, X } from 'lucide-react'
+import { Plus, Send, X } from 'lucide-react'
 import { useState, type KeyboardEvent } from 'react'
 import { useForm } from 'react-hook-form'
 import { agentSchema, emptyAgentForm, KENNIX_MANAGERS, LAND_TYPES, STATES, type AgentForm } from '../lib/schema'
 import { RegistrationError, registrationService, type RegisteredAgent, type Session } from '../services/registrationService'
 import { Alert, Button, Field } from './ui'
-
-export const GUIDELINES = [
-  'Whoever registers the property details first in the KENNIX portal is the Channel Partner (CP) KENNIX proceeds with, unless the manager approves a change for a specific reason.',
-  'To claim the commission, the Channel Partner must accompany the KENNIX Land Sourcing team to the property.',
-]
 
 export function AgentFormStep({ session, onDone, onExpired }: { session: Session; onDone: (agent: RegisteredAgent) => void; onExpired: () => void }) {
   const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting, submitCount } } = useForm<AgentForm>({
@@ -87,13 +82,6 @@ export function AgentFormStep({ session, onDone, onExpired }: { session: Session
 
     {/* Honeypot: invisible to people, tempting to bots. */}
     <div aria-hidden="true" className="absolute -left-[9999px] h-0 overflow-hidden"><label>Website<input tabIndex={-1} autoComplete="off" {...register('website')}/></label></div>
-
-    <section aria-labelledby="guidelines" className="rounded-xl border border-amber-200 bg-amber-50 p-4 sm:p-5">
-      <h3 id="guidelines" className="flex items-center gap-2 text-sm font-bold text-amber-900"><ScrollText size={16}/> Guidelines for Channel Partners</h3>
-      <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-6 text-amber-950">
-        {GUIDELINES.map(text => <li key={text}>{text}</li>)}
-      </ol>
-    </section>
 
     {submitCount > 0 && errorCount > 0 && <Alert>Please fix the {errorCount} highlighted {errorCount === 1 ? 'field' : 'fields'}.</Alert>}
     {error && <Alert>{error}</Alert>}
