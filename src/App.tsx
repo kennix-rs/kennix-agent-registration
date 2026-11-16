@@ -8,6 +8,12 @@ import { registrationService, type RegisteredAgent, type Session } from './servi
 
 type Step = 'email' | 'details' | 'done'
 
+const GUIDELINES = [
+  'Whoever registers the property details first in the KENNIX portal is the Channel Partner (CP) KENNIX proceeds with, unless the manager approves a change for a specific reason.',
+  'To claim the commission, the Channel Partner must accompany the KENNIX Land Sourcing team to the property.',
+]
+
+
 export default function App() {
   const [session, setSession] = useState<Session | null>(() => registrationService.currentSession())
   const [agent, setAgent] = useState<RegisteredAgent | null>(null)
@@ -32,6 +38,12 @@ export default function App() {
         {step === 'details' && session && <AgentFormStep session={session} onDone={setAgent} onExpired={() => { setSession(null); setExpired(true) }}/>}
         {step === 'done' && agent && <Done agent={agent} onAgain={() => { setAgent(null); setSession(null) }}/>}
       </div>
+      {step === 'details' && <section aria-labelledby="guidelines" className="mt-8 px-1 text-sm leading-6 text-slate-700">
+        <h2 id="guidelines" className="font-semibold text-slate-900">Guidelines:</h2>
+        <ol className="mt-2 list-decimal space-y-1.5 pl-6">
+          {GUIDELINES.map(text => <li key={text}>{text}</li>)}
+        </ol>
+      </section>}
       {privacy}
     </main>
   </div>
