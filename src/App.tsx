@@ -14,6 +14,28 @@ export default function App() {
   const [expired, setExpired] = useState(false)
   const step: Step = agent ? 'done' : session ? 'details' : 'email'
 
+  const steps = <ol className="mb-5 flex flex-wrap gap-x-5 gap-y-2" aria-label="Registration steps">
+    <StepLabel number={1} label="Verify email" state={step === 'email' ? 'active' : 'done'}/>
+    <StepLabel number={2} label="Your details" state={step === 'details' ? 'active' : step === 'done' ? 'done' : 'todo'}/>
+    <StepLabel number={3} label="Done" state={step === 'done' ? 'active' : 'todo'}/>
+  </ol>
+  const privacy = <p className="mt-4 text-center text-xs text-slate-500">Your details are used only by the KENNIX Land Sourcing team to contact you about land requirements.</p>
+
+  // After the email is verified, the form gets the whole page: logo on top, no side panel.
+  if (step !== 'email') return <div className="min-h-screen px-4 py-6 sm:px-8 sm:py-10">
+    <header className="mx-auto mb-8 flex w-full max-w-4xl justify-center border-b border-slate-200 pb-6">
+      <img src="/kennix-logo.png" alt="KENNIX Real Estate" className="h-20 w-auto sm:h-28"/>
+    </header>
+    <main className="mx-auto w-full max-w-4xl">
+      {steps}
+      <div className="card p-5 sm:p-8">
+        {step === 'details' && session && <AgentFormStep session={session} onDone={setAgent} onExpired={() => { setSession(null); setExpired(true) }}/>}
+        {step === 'done' && agent && <Done agent={agent} onAgain={() => { setAgent(null); setSession(null) }}/>}
+      </div>
+      {privacy}
+    </main>
+  </div>
+
   return <div className="min-h-screen lg:grid lg:grid-cols-[.85fr_1.15fr]">
     <aside className="relative hidden overflow-hidden bg-[#10243e] p-12 text-white lg:flex lg:flex-col lg:justify-between">
       <div className="absolute -right-36 top-24 h-96 w-96 rounded-full bg-teal-500/10 blur-3xl"/>
@@ -32,22 +54,16 @@ export default function App() {
     </aside>
 
     <main className="flex min-h-screen flex-col items-center px-4 py-6 sm:px-8 sm:py-10">
-      <div className="mb-6 flex w-full max-w-2xl items-center gap-3 lg:hidden"><span className="brand-mark">K</span><div><strong className="block tracking-[.18em] text-[#10243e]">KENNIX</strong><span className="text-xs text-slate-500">Agent registration</span></div></div>
+      <div className="mb-6 flex w-full max-w-2xl justify-center lg:hidden"><img src="/kennix-logo.png" alt="KENNIX Real Estate" className="h-14 w-auto"/></div>
       <div className="w-full max-w-2xl">
-        <ol className="mb-5 flex flex-wrap gap-x-5 gap-y-2" aria-label="Registration steps">
-          <StepLabel number={1} label="Verify email" state={step === 'email' ? 'active' : 'done'}/>
-          <StepLabel number={2} label="Your details" state={step === 'details' ? 'active' : step === 'done' ? 'done' : 'todo'}/>
-          <StepLabel number={3} label="Done" state={step === 'done' ? 'active' : 'todo'}/>
-        </ol>
+        {steps}
         <div className="card p-5 sm:p-8">
-          {step === 'email' && <div className="space-y-5">
+          <div className="space-y-5">
             {expired && <Alert tone="info">Your verification expired after 30 minutes. Verify your email again to continue.</Alert>}
             <EmailStep onVerified={next => { setExpired(false); setSession(next) }}/>
-          </div>}
-          {step === 'details' && session && <AgentFormStep session={session} onDone={setAgent} onExpired={() => { setSession(null); setExpired(true) }}/>}
-          {step === 'done' && agent && <Done agent={agent} onAgain={() => { setAgent(null); setSession(null) }}/>}
+          </div>
         </div>
-        <p className="mt-4 text-center text-xs text-slate-500">Your details are used only by the KENNIX Land Sourcing team to contact you about land requirements.</p>
+        {privacy}
       </div>
     </main>
   </div>
